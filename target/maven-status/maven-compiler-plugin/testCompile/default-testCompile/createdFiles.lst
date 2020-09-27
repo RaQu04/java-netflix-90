@@ -1,0 +1,6 @@
+pl\yellowduck\netflix90\rentals\RentalRegistryTest.class
+pl\yellowduck\netflix90\ExampleTest.class
+pl\yellowduck\netflix90\resources\FileSystemVideoCatalogTest.class
+pl\yellowduck\netflix90\resources\VideoCassetteCatalogTest.class
+pl\yellowduck\netflix90\resources\UniqueVideoCassetteCatalogTest.class
+pl\yellowduck\netflix90\resources\VideoCassetteTest.class
