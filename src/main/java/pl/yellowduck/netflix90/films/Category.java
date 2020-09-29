@@ -1,5 +1,7 @@
 package pl.yellowduck.netflix90.films;
 
+
+
 public enum Category {
 
   COMEDY, // orinal value 0
