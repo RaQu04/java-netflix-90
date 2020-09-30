@@ -6,6 +6,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.junit.Test;
+import pl.yellowduck.netflix90.common.Gender;
+import pl.yellowduck.netflix90.common.Person;
 
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -13,7 +15,7 @@ import javax.persistence.Persistence;
 import javax.persistence.Table;
 
 
-public class CategoryHibernateTest {
+public class HibernateTest {
     SessionFactory sessionFactory;
 
 
@@ -31,11 +33,37 @@ public class CategoryHibernateTest {
         try (Session session = sessionFactory.openSession()) {
             tx = session.beginTransaction();
 
+            System.out.println("Connect to database");
+
+            tx.commit();
+        } catch (HibernateException ex) {
+            if (tx != null && !tx.getRollbackOnly()) {
+                tx.rollback();
+            }
+            throw ex;
+        }
+
+    }
+
+    @Test
+    public void saveCategory() {
+
+        sessionFactory = new Configuration()
+                .configure("hibernate.cfg.xml")
+                .addAnnotatedClass(CategoryHibernate.class)
+                .buildSessionFactory();
+
+        System.out.println("\n\n--------------------->\n" +
+                "Hibernate Session Factory Created");
+
+        Transaction tx = null;
+        try (Session session = sessionFactory.openSession()) {
+            tx = session.beginTransaction();
+
             CategoryHibernate category = new CategoryHibernate();
             category.setName("Horror");
             category.setDescription("Scary movie");
             session.save(category);
-
 
 
             category = new CategoryHibernate();
@@ -56,15 +84,38 @@ public class CategoryHibernateTest {
             throw ex;
         }
 
-
-
     }
 
     @Test
-    public void saveCategory(){
-        CategoryHibernate categoryHibernate = new CategoryHibernate("Drama", "Dramat");
+    public void shouldAddActors(){
 
-        // EntityManager entityManager = Persistence.createEntityManagerFactory();
+        sessionFactory = new Configuration()
+                .configure("hibernate.cfg.xml")
+                .addAnnotatedClass(ActorHibernate.class)
+                .buildSessionFactory();
+
+        System.out.println("\n\n--------------------->\n" +
+                "Hibernate Session Factory Created");
+
+        Transaction tx = null;
+        try(Session session = sessionFactory.openSession()){
+            tx = session.beginTransaction();
+
+            ActorHibernate actor = new ActorHibernate();
+            actor.setFirstname("Penelope");
+            actor.setLastname("Cruse");
+            actor.setGender(Gender.FEMALE);
+            session.save(actor);
+
+
+            tx.commit();
+        }catch (HibernateException ex){
+            if(tx != null){
+                tx.rollback();
+            }
+        }
+
     }
+
 
 }
