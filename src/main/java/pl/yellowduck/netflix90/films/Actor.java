@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Entity
-@Table (name = "actors")
+@Table(name = "actors")
 @DiscriminatorValue("A")
 public class Actor extends Person {
 
@@ -21,6 +21,7 @@ public class Actor extends Person {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
+
 
     public Actor() {
         super();
