@@ -14,6 +14,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 import javax.persistence.Table;
 
+import static org.junit.Assert.fail;
+
 
 public class HibernateTest {
     SessionFactory sessionFactory;
@@ -107,14 +109,37 @@ public class HibernateTest {
             actor.setGender(Gender.FEMALE);
             session.save(actor);
 
+            actor = new ActorHibernate();
+            actor.setFirstname("Jan");
+            actor.setLastname("Kowalski");
+            actor.setGender(Gender.MALE);
+            session.save(actor);
+
 
             tx.commit();
+
         }catch (HibernateException ex){
+            fail("Nie powinno dojść do wyjątku");
             if(tx != null){
                 tx.rollback();
             }
         }
 
+    }
+
+    @Test
+    public void saveTest(){
+        EntityManager entityManager = Persistence.createEntityManagerFactory("NETFLIX")
+                .createEntityManager();
+        entityManager.getTransaction().begin();
+
+        Actor jimCarry = new Actor("Jim", "Carry", Gender.MALE);
+        entityManager.persist(jimCarry);
+
+        Director director = new Director("Jim", "Carry", Gender.MALE);
+        entityManager.persist(director);
+
+        entityManager.getTransaction().commit();
     }
 
 
