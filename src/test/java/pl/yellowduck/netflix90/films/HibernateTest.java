@@ -1,11 +1,13 @@
 package pl.yellowduck.netflix90.films;
 
+import lombok.ToString;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.junit.Test;
+import pl.yellowduck.netflix90.clients.Client;
 import pl.yellowduck.netflix90.common.Gender;
 import pl.yellowduck.netflix90.common.Person;
 
@@ -140,6 +142,44 @@ public class HibernateTest {
         entityManager.persist(director);
 
         entityManager.getTransaction().commit();
+    }
+
+    @Test
+    public void addClientToBase(){
+        sessionFactory = new Configuration()
+                .configure("hibernate.cfg.xml")
+                .addAnnotatedClass(Client.class)
+                .buildSessionFactory();
+
+        System.out.println("\n\n--------------------->\n" +
+                "Hibernate Session Factory Created");
+
+        Transaction tx = null;
+        try(Session session = sessionFactory.openSession()){
+            tx = session.beginTransaction();
+
+            Client client = new Client();
+            client.setFirstname("Tomasz");
+            client.setLastname("Kijowski");
+            client.setGender(Gender.MALE);
+            session.save(client);
+
+            client = new Client();
+            client.setFirstname("Jacek");
+            client.setLastname("Jackowski");
+            client.setGender(Gender.MALE);
+            session.save(client);
+
+
+            tx.commit();
+
+        }catch (HibernateException ex){
+            fail("Nie powinno dojść do wyjątku");
+            if(tx != null){
+                tx.rollback();
+            }
+        }
+
     }
 
 
