@@ -12,15 +12,21 @@ import pl.yellowduck.netflix90.rentals.Rental;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
-
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.Assert.fail;
 
 
 public class HibernateTest {
     SessionFactory sessionFactory;
+    public static final Actor JIM_CARRY = new Actor("Jim", "Carry", Gender.MALE);
+    public static final Actor PENELOPE = new Actor("Penelope", "Cruse", Gender.FEMALE);
+    public static final EntityManager ENTITY_MANAGER = Persistence.createEntityManagerFactory("NETFLIX")
+            .createEntityManager();
+    public static final Director DIRECTOR = new Director("Jim", "Carry", Gender.MALE);
+    public static final Set<Actor> ACTOR_LIST = new HashSet<>();
 
 
     @Test
@@ -105,18 +111,7 @@ public class HibernateTest {
         try(Session session = sessionFactory.openSession()){
             tx = session.beginTransaction();
 
-            ActorHibernate actor = new ActorHibernate();
-            actor.setFirstname("Penelope");
-            actor.setLastname("Cruse");
-            actor.setGender(Gender.FEMALE);
-            session.save(actor);
-
-            actor = new ActorHibernate();
-            actor.setFirstname("Jan");
-            actor.setLastname("Kowalski");
-            actor.setGender(Gender.MALE);
-            session.save(actor);
-
+            session.save(PENELOPE);
 
             tx.commit();
 
@@ -131,19 +126,15 @@ public class HibernateTest {
 
     @Test
     public void saveTest(){
-        EntityManager entityManager = Persistence.createEntityManagerFactory("NETFLIX")
-                .createEntityManager();
-        entityManager.getTransaction().begin();
+        ENTITY_MANAGER.getTransaction().begin();
 
-        Actor jimCarry = new Actor("Jim", "Carry", Gender.MALE);
-        entityManager.persist(jimCarry);
+        ENTITY_MANAGER.persist(JIM_CARRY);
 
-        Director director = new Director("Jim", "Carry", Gender.MALE);
-        entityManager.persist(director);
+        ENTITY_MANAGER.persist(DIRECTOR);
 
 
 
-        entityManager.getTransaction().commit();
+        ENTITY_MANAGER.getTransaction().commit();
     }
 
     @Test
@@ -185,14 +176,9 @@ public class HibernateTest {
     @Test
     public void shouldAddCassetteTab(){
 
-        Director director1 = new Director("Lukasz", "Nowak", Gender.MALE);
-        CategoryHibernate categoryHibernate = new CategoryHibernate("Drama", "Dramat");
 
-        Actor actor1 = new Actor();
-        Actor actor2 = new Actor();
-        Set<Actor> actorList = new HashSet<>();
-        actorList.add(actor1);
-        actorList.add(actor2);
+        ACTOR_LIST.add(JIM_CARRY);
+        ACTOR_LIST.add(PENELOPE);
 
 
         sessionFactory = new Configuration()
@@ -208,18 +194,18 @@ public class HibernateTest {
         Transaction tx = null;
         try(Session session = sessionFactory.openSession()){
             tx = session.beginTransaction();
-            session.persist(director1);
-            session.persist(actor1);
-            session.persist(actor2);
+            session.persist(DIRECTOR);
+            session.persist(JIM_CARRY);
+            session.persist(PENELOPE);
 
 
             VideoCassette videoCassette = new VideoCassette();
             videoCassette.setTitle("Park Jurajski");
             videoCassette.setPrice(BigDecimal.valueOf(10));
-            videoCassette.setActors(Set.of(actor1, actor2));
+            videoCassette.setActors(Set.of(JIM_CARRY, PENELOPE));
             videoCassette.setCategory(Category.ACTION);
             //videoCassette.setCategoryHibernate(categoryHibernate);
-            videoCassette.setDirector(director1);
+            videoCassette.setDirector(DIRECTOR);
 
 
             session.persist(videoCassette);
