@@ -6,13 +6,16 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.junit.Test;
+import pl.yellowduck.netflix90.clients.Client;
 import pl.yellowduck.netflix90.common.Gender;
 import pl.yellowduck.netflix90.common.Person;
 
-import javax.persistence.Entity;
+import javax.lang.model.util.AbstractAnnotationValueVisitor6;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
-import javax.persistence.Table;
+
+import java.math.BigDecimal;
+import java.util.*;
 
 import static org.junit.Assert.fail;
 
@@ -139,7 +142,97 @@ public class HibernateTest {
         Director director = new Director("Jim", "Carry", Gender.MALE);
         entityManager.persist(director);
 
+
+
         entityManager.getTransaction().commit();
+    }
+
+    @Test
+    public void addClientToBase(){
+        sessionFactory = new Configuration()
+                .configure("hibernate.cfg.xml")
+                .addAnnotatedClass(Client.class)
+                .buildSessionFactory();
+
+        System.out.println("\n\n--------------------->\n" +
+                "Hibernate Session Factory Created");
+
+        Transaction tx = null;
+        try(Session session = sessionFactory.openSession()){
+            tx = session.beginTransaction();
+
+            Client client = new Client();
+            client.setFirstname("Tomasz");
+            client.setLastname("Kijowski");
+            client.setGender(Gender.MALE);
+            session.save(client);
+
+            client = new Client();
+            client.setFirstname("Jacek");
+            client.setLastname("Jackowski");
+            client.setGender(Gender.MALE);
+            session.save(client);
+
+
+            tx.commit();
+
+        }catch (HibernateException ex){
+            fail("Nie powinno dojść do wyjątku");
+            if(tx != null){
+                tx.rollback();
+            }
+        }
+    }
+    @Test
+    public void shouldAddCassetteTab(){
+
+        Director director1 = new Director("Lukasz", "Nowak", Gender.MALE);
+        CategoryHibernate categoryHibernate = new CategoryHibernate("Drama", "Dramat");
+
+        Actor actor1 = new Actor();
+        Actor actor2 = new Actor();
+        Set<Actor> actorList = new HashSet<>();
+        actorList.add(actor1);
+        actorList.add(actor2);
+
+
+        sessionFactory = new Configuration()
+                .configure("hibernate.cfg.xml")
+                .addAnnotatedClass(VideoCassette.class)
+                .addAnnotatedClass(Director.class)
+                .addAnnotatedClass(Actor.class)
+                .buildSessionFactory();
+
+        System.out.println("\n\n--------------------->\n" +
+                "Hibernate Session Factory Created");
+
+        Transaction tx = null;
+        try(Session session = sessionFactory.openSession()){
+            tx = session.beginTransaction();
+            session.persist(director1);
+            session.persist(actor1);
+            session.persist(actor2);
+
+
+            VideoCassette videoCassette = new VideoCassette();
+            videoCassette.setTitle("Park Jurajski");
+            videoCassette.setPrice(BigDecimal.valueOf(10));
+            videoCassette.setActors(Set.of(actor1, actor2));
+            videoCassette.setCategory(Category.ACTION);
+            //videoCassette.setCategoryHibernate(categoryHibernate);
+            videoCassette.setDirector(director1);
+
+
+            session.persist(videoCassette);
+
+
+            tx.commit();
+        }catch (HibernateException ex){
+            fail("Nie powinno dojść do wyjątku");
+            if(tx != null){
+                tx.rollback();
+            }
+        }
     }
 
 

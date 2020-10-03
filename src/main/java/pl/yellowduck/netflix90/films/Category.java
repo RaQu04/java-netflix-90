@@ -1,6 +1,9 @@
 package pl.yellowduck.netflix90.films;
 
 
+import javax.persistence.Entity;
+import javax.persistence.Enumerated;
+
 
 public enum Category {
 
