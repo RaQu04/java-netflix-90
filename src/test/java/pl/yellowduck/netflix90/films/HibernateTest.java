@@ -14,6 +14,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.*;
 
 import static org.junit.Assert.fail;
@@ -233,14 +234,25 @@ public class HibernateTest {
             }
         }
     }
-
     @Test
-    public void shouldCreateRentalBase(){
+    public void shouldAddRental(){
+
+        Director director1 = new Director("Lukasz", "Nowak", Gender.MALE);
+        CategoryHibernate categoryHibernate = new CategoryHibernate("Drama", "Dramat");
+
+        Actor actor1 = new Actor();
+        Actor actor2 = new Actor();
+        Set<Actor> actorList = new HashSet<>();
+        actorList.add(actor1);
+        actorList.add(actor2);
+
+
         sessionFactory = new Configuration()
                 .configure("hibernate.cfg.xml")
                 .addAnnotatedClass(Rental.class)
                 .addAnnotatedClass(VideoCassette.class)
-                .addAnnotatedClass(Client.class)
+                .addAnnotatedClass(Director.class)
+                .addAnnotatedClass(Actor.class)
                 .buildSessionFactory();
 
         System.out.println("\n\n--------------------->\n" +
@@ -249,12 +261,22 @@ public class HibernateTest {
         Transaction tx = null;
         try(Session session = sessionFactory.openSession()){
             tx = session.beginTransaction();
+            session.persist(director1);
+            session.persist(actor1);
+            session.persist(actor2);
 
 
+            Rental rental = new Rental();
+            rental.setClientId("E001");
+            rental.setCassetteId("E027");
+//            rental.setRentDate();
+            rental.setRentDays(5);
+            rental.setRentCost(BigDecimal.valueOf(5));
+//            rental.setReturnDate();
+            session.persist(rental);
 
 
             tx.commit();
-
         }catch (HibernateException ex){
             fail("Nie powinno dojść do wyjątku");
             if(tx != null){
