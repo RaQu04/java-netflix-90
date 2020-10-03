@@ -6,7 +6,7 @@
         <property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
         <property name="connection.url">jdbc:mysql://localhost:3306/netflix90?serverTimezone=UTC</property>
         <property name="connection.username">root</property>
-        <property name="connection.password">sqlhaslo123</property>
+        <property name="connection.password">orcs5ogxd4wz</property>
         <property name="show_sql">true</property>
         <property name="hibernate.format_sql">true</property>
 
