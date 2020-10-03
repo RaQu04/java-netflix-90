@@ -8,9 +8,8 @@ import org.hibernate.cfg.Configuration;
 import org.junit.Test;
 import pl.yellowduck.netflix90.clients.Client;
 import pl.yellowduck.netflix90.common.Gender;
-import pl.yellowduck.netflix90.common.Person;
+import pl.yellowduck.netflix90.rentals.Rental;
 
-import javax.lang.model.util.AbstractAnnotationValueVisitor6;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 
@@ -227,6 +226,35 @@ public class HibernateTest {
 
 
             tx.commit();
+        }catch (HibernateException ex){
+            fail("Nie powinno dojść do wyjątku");
+            if(tx != null){
+                tx.rollback();
+            }
+        }
+    }
+
+    @Test
+    public void shouldCreateRentalBase(){
+        sessionFactory = new Configuration()
+                .configure("hibernate.cfg.xml")
+                .addAnnotatedClass(Rental.class)
+                .addAnnotatedClass(VideoCassette.class)
+                .addAnnotatedClass(Client.class)
+                .buildSessionFactory();
+
+        System.out.println("\n\n--------------------->\n" +
+                "Hibernate Session Factory Created");
+
+        Transaction tx = null;
+        try(Session session = sessionFactory.openSession()){
+            tx = session.beginTransaction();
+
+
+
+
+            tx.commit();
+
         }catch (HibernateException ex){
             fail("Nie powinno dojść do wyjątku");
             if(tx != null){

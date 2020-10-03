@@ -2,16 +2,22 @@ package pl.yellowduck.netflix90.rentals;
 
 import lombok.Getter;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+@Entity
+@Table(name = "rental")
 @Getter
 //@RequiredArgsConstructor
 public class Rental {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private final int identity;
+
     private final String clientId;
-    private final String casseteId;
+    private final String cassetteId;
     private final LocalDate rentDate;
     private final int rentDays;
     private final BigDecimal rentCost;
@@ -20,7 +26,7 @@ public class Rental {
     private Rental(RentalBuilder builder) {
         this.identity = builder.identity;
         this.clientId = builder.clientId;
-        this.casseteId = builder.casseteId;
+        this.cassetteId = builder.casseteId;
         this.rentDate = builder.rentDate;
         this.rentDays = builder.rentDays;
         this.rentCost = builder.rentCost;
