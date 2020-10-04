@@ -1,32 +1,46 @@
 package pl.yellowduck.netflix90.rentals;
 
 import lombok.Getter;
+import lombok.Setter;
+import pl.yellowduck.netflix90.clients.Client;
+import pl.yellowduck.netflix90.films.VideoCassette;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "rental")
+@Table(name = "rentals")
 @Getter
 //@RequiredArgsConstructor
 public class Rental {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private final int identity;
+    private Integer id;
 
-    private final String clientId;
-    private final String cassetteId;
-    private final LocalDate rentDate;
-    private final int rentDays;
-    private final BigDecimal rentCost;
+    @ManyToOne
+    @JoinColumn(name = "id_client") // w bazie id_client
+    private Client client;
+    //client_id
+
+    @ManyToOne
+    @JoinColumn(name = "id_cassette")
+    private VideoCassette cassette;
+
+    private LocalDate rentDate;
+    private int rentDays;
+    private BigDecimal rentCost;
+
+    @Setter
     private LocalDate returnDate;
 
+    public Rental() {
+    }
+
     private Rental(RentalBuilder builder) {
-        this.identity = builder.identity;
-        this.clientId = builder.clientId;
-        this.cassetteId = builder.casseteId;
+        this.client = builder.client;
+        this.cassette = builder.videoCassette;
         this.rentDate = builder.rentDate;
         this.rentDays = builder.rentDays;
         this.rentCost = builder.rentCost;
@@ -37,9 +51,8 @@ public class Rental {
     }
 
     public static final class RentalBuilder {
-        private int identity;
-        private String clientId;
-        private String casseteId;
+        private Client client;
+        private VideoCassette videoCassette;
         private LocalDate rentDate;
         private int rentDays;
         private BigDecimal rentCost;
@@ -48,18 +61,14 @@ public class Rental {
         private RentalBuilder() {
         }
 
-        public RentalBuilder withIdentity(int identity) {
-            this.identity = identity;
+
+        public RentalBuilder withClientId(Client client) {
+            this.client = client;
             return this;
         }
 
-        public RentalBuilder withClientId(String clientId) {
-            this.clientId = clientId;
-            return this;
-        }
-
-        public RentalBuilder withCasseteId(String casseteId) {
-            this.casseteId = casseteId;
+        public RentalBuilder withCassetteId(VideoCassette videoCassette) {
+            this.videoCassette = videoCassette;
             return this;
         }
 

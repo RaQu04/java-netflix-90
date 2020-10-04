@@ -21,7 +21,7 @@ public class Client extends Person {
     private Integer id;
 
     @JsonCreator
-    public Client(@JsonProperty("firsrtname") String firstname,
+    public Client(@JsonProperty("firstname") String firstname,
                   @JsonProperty("lastname") String lastname,
                   @JsonProperty("gender") Gender gender) {
         super(firstname, lastname, gender);

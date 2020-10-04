@@ -13,16 +13,17 @@ import java.util.Set;
 @Setter
 @Getter
 @Entity
-@Table(name = "films")
+@Table(name = "cassette")
 public class VideoCassette {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    private Integer id;
 
     @Transient
     private String idCassette;
 
+ //   @Column(name = "price", scale = 5, precision = 2)
     private BigDecimal price;
     private String title;
 

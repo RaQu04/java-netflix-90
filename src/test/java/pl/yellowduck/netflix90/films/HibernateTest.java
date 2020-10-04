@@ -13,6 +13,8 @@ import pl.yellowduck.netflix90.rentals.Rental;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,13 +22,15 @@ import static org.junit.Assert.fail;
 
 
 public class HibernateTest {
+    public static final Client CLIENT = new Client("Lukasz", "Rakowiecki", Gender.MALE);
     SessionFactory sessionFactory;
     public static final Actor JIM_CARRY = new Actor("Jim", "Carry", Gender.MALE);
     public static final Actor PENELOPE = new Actor("Penelope", "Cruse", Gender.FEMALE);
-    public static final EntityManager ENTITY_MANAGER = Persistence.createEntityManagerFactory("NETFLIX")
-            .createEntityManager();
+    //    public static final EntityManager ENTITY_MANAGER = Persistence.createEntityManagerFactory("NETFLIX")
+//            .createEntityManager();
     public static final Director DIRECTOR = new Director("Jim", "Carry", Gender.MALE);
     public static final Set<Actor> ACTOR_LIST = new HashSet<>();
+    public static final VideoCassette VIDEO_CASSETTE = new VideoCassette();
 
 
     @Test
@@ -97,7 +101,7 @@ public class HibernateTest {
     }
 
     @Test
-    public void shouldAddActors(){
+    public void shouldAddActors() {
 
         sessionFactory = new Configuration()
                 .configure("hibernate.cfg.xml")
@@ -108,37 +112,36 @@ public class HibernateTest {
                 "Hibernate Session Factory Created");
 
         Transaction tx = null;
-        try(Session session = sessionFactory.openSession()){
+        try (Session session = sessionFactory.openSession()) {
             tx = session.beginTransaction();
 
             session.save(PENELOPE);
 
             tx.commit();
 
-        }catch (HibernateException ex){
+        } catch (HibernateException ex) {
             fail("Nie powinno dojść do wyjątku");
-            if(tx != null){
+            if (tx != null) {
                 tx.rollback();
             }
         }
 
     }
 
+//    @Test
+//    public void saveTest() {
+//        ENTITY_MANAGER.getTransaction().begin();
+//
+//        ENTITY_MANAGER.persist(JIM_CARRY);
+//
+//        ENTITY_MANAGER.persist(DIRECTOR);
+//
+//
+//        ENTITY_MANAGER.getTransaction().commit();
+//    }
+
     @Test
-    public void saveTest(){
-        ENTITY_MANAGER.getTransaction().begin();
-
-        ENTITY_MANAGER.persist(JIM_CARRY);
-
-        ENTITY_MANAGER.persist(DIRECTOR);
-
-
-
-        ENTITY_MANAGER.getTransaction().commit();
-    }
-
-    @Test
-    public void addClientToBase(){
+    public void addClientToBase() {
         sessionFactory = new Configuration()
                 .configure("hibernate.cfg.xml")
                 .addAnnotatedClass(Client.class)
@@ -148,7 +151,7 @@ public class HibernateTest {
                 "Hibernate Session Factory Created");
 
         Transaction tx = null;
-        try(Session session = sessionFactory.openSession()){
+        try (Session session = sessionFactory.openSession()) {
             tx = session.beginTransaction();
 
             Client client = new Client();
@@ -166,15 +169,16 @@ public class HibernateTest {
 
             tx.commit();
 
-        }catch (HibernateException ex){
+        } catch (HibernateException ex) {
             fail("Nie powinno dojść do wyjątku");
-            if(tx != null){
+            if (tx != null) {
                 tx.rollback();
             }
         }
     }
+
     @Test
-    public void shouldAddCassetteTab(){
+    public void shouldAddCassetteTab() {
 
 
         ACTOR_LIST.add(JIM_CARRY);
@@ -192,58 +196,85 @@ public class HibernateTest {
                 "Hibernate Session Factory Created");
 
         Transaction tx = null;
-        try(Session session = sessionFactory.openSession()){
+        try (Session session = sessionFactory.openSession()) {
             tx = session.beginTransaction();
             session.persist(DIRECTOR);
             session.persist(JIM_CARRY);
             session.persist(PENELOPE);
 
 
-            VideoCassette videoCassette = new VideoCassette();
-            videoCassette.setTitle("Park Jurajski");
-            videoCassette.setPrice(BigDecimal.valueOf(10));
-            videoCassette.setActors(Set.of(JIM_CARRY, PENELOPE));
-            videoCassette.setCategory(Category.ACTION);
+            VIDEO_CASSETTE.setTitle("Park Jurajski");
+            VIDEO_CASSETTE.setPrice(BigDecimal.valueOf(10));
+            VIDEO_CASSETTE.setActors(Set.of(JIM_CARRY, PENELOPE));
+            VIDEO_CASSETTE.setCategory(Category.ACTION);
             //videoCassette.setCategoryHibernate(categoryHibernate);
-            videoCassette.setDirector(DIRECTOR);
+            VIDEO_CASSETTE.setDirector(DIRECTOR);
 
 
-            session.persist(videoCassette);
+            session.persist(VIDEO_CASSETTE);
 
 
             tx.commit();
-        }catch (HibernateException ex){
+        } catch (HibernateException ex) {
             fail("Nie powinno dojść do wyjątku");
-            if(tx != null){
+            if (tx != null) {
                 tx.rollback();
             }
         }
     }
 
     @Test
-    public void shouldCreateRentalBase(){
+    public void shouldCreateRentalBase() {
+
+        ACTOR_LIST.add(JIM_CARRY);
+        ACTOR_LIST.add(PENELOPE);
         sessionFactory = new Configuration()
                 .configure("hibernate.cfg.xml")
                 .addAnnotatedClass(Rental.class)
                 .addAnnotatedClass(VideoCassette.class)
                 .addAnnotatedClass(Client.class)
+                .addAnnotatedClass(Director.class)
+                .addAnnotatedClass(Actor.class)
                 .buildSessionFactory();
 
         System.out.println("\n\n--------------------->\n" +
                 "Hibernate Session Factory Created");
 
         Transaction tx = null;
-        try(Session session = sessionFactory.openSession()){
+        try (Session session = sessionFactory.openSession()) {
+
             tx = session.beginTransaction();
+            session.persist(CLIENT);
+            session.persist(JIM_CARRY);
+            session.persist(PENELOPE);
+            session.persist(DIRECTOR);
+
+            VIDEO_CASSETTE.setTitle("Park Jurajski");
+            VIDEO_CASSETTE.setPrice(BigDecimal.valueOf(10));
+            VIDEO_CASSETTE.setActors(Set.of(JIM_CARRY, PENELOPE));
+            VIDEO_CASSETTE.setCategory(Category.ACTION);
+            //videoCassette.setCategoryHibernate(categoryHibernate);
+            VIDEO_CASSETTE.setDirector(DIRECTOR);
+
+            session.persist(VIDEO_CASSETTE);
 
 
+            Rental rental = Rental.builder()
+                    .withClientId(CLIENT)
+                    .withRentDate(LocalDate.now())
+                    .withCassetteId(VIDEO_CASSETTE)
+                    .withRentDays(5)
+                    .withRentCost(BigDecimal.valueOf(10))
+                    .build();
+
+            session.persist(rental);
 
 
             tx.commit();
 
-        }catch (HibernateException ex){
+        } catch (HibernateException ex) {
             fail("Nie powinno dojść do wyjątku");
-            if(tx != null){
+            if (tx != null) {
                 tx.rollback();
             }
         }
