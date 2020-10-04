@@ -28,6 +28,7 @@
         </Menu>
         <Menu mnemonicParsing="false" text="Dictionaries">
           <items>
+            <MenuItem mnemonicParsing="false" text="New category" onAction="#newCategory"/>
             <MenuItem mnemonicParsing="false" text="Categories" onAction="#categories"/>
           </items>
         </Menu>
