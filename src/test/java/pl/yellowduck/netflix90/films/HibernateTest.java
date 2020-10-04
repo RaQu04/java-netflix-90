@@ -10,11 +10,8 @@ import pl.yellowduck.netflix90.clients.Client;
 import pl.yellowduck.netflix90.common.Gender;
 import pl.yellowduck.netflix90.rentals.Rental;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Persistence;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.Set;
 
