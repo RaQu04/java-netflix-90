@@ -240,7 +240,7 @@ public class HibernateTest {
     public void shouldAddRental(){
 
         LocalDate date1 = LocalDate.now() ;
-        LocalDate date2 = LocalDate.of(2020,01,01);
+        LocalDate date2 = LocalDate.of(2021,01,01);
         int dateTime = (int) ChronoUnit.DAYS.between(date1, date2);
 
 
@@ -291,7 +291,7 @@ public class HibernateTest {
                     .withCasseteId(cassette1)
                     .withRentDate(date1)
                     .withRentCost(BigDecimal.valueOf(5))
-                    .withRentDays(5)
+                    .withRentDays(dateTime)
                     .withReturnDate(date2)
                     .build();
 
